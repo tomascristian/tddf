@@ -1,0 +1,16 @@
+{
+  "name": "testing",
+  "version": "0.0.0",
+  "description": "Unit testing library",
+  "main": "/src/test.js",
+  "type": "module",
+  "scripts": {
+    "test": "node ./src/test.test.js",
+    "watch": "npx onchange -i 'package.json' './src/*.*' -- node ./src/test.test.js"
+  },
+  "keywords": [],
+  "author": "Tomas Cristian",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {}
+}
