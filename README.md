@@ -18,6 +18,15 @@ Minimalist unit testing library with just the features I need.
 
 - Fast!
 
+## Try it out
+It's not on npm yet, sorry! Meanwhile you can:
+```
+git clone https://github.com/tomascristian/test/
+cd test
+npm test
+```
+Or you can play with it here: https://codesandbox.io/s/github/tomascristian/test
+
 ## Other Notes
 - Requires Node.js v13+ (needs ES modules support, Node.js v12 might work with --experimental-modules flag).
 
