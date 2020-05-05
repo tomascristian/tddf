@@ -10,7 +10,7 @@
   },
   "keywords": [],
   "author": "Tomas Cristian",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {},
   "devDependencies": {}
 }
