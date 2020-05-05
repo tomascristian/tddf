@@ -19,6 +19,7 @@ function createTest(title, implementation) {
       try {
         implementation({ // We're passing it a "test execution context" (t)
           assert: assert.ok,
+          deepEqual: assert.deepStrictEqual,
           is: assert.strictEqual
         });
       } catch (e) {
