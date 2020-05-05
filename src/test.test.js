@@ -5,7 +5,7 @@ test("Runs", t => {
 });
 
 test("Tests fail with helpful information", t => {
-  t.same("P", "NP");
+  t.is("P", "NP");
 });
 
 test("Keeps running tests after a failed test", t => {

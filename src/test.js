@@ -19,7 +19,7 @@ function createTest(title, implementation) {
       try {
         implementation({ // We're passing it a "test execution context" (t)
           assert: assert.ok,
-          same: assert.strictEqual
+          is: assert.strictEqual
         });
       } catch (e) {
         this.error = e;
