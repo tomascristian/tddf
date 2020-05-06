@@ -15,9 +15,13 @@ function createTest(title, implementation) {
   return {
     title,
     error: null,
-    run() {
+    result: undefined,
+    start() {
+      this.result = this.run();
+    },
+    async run() {
       try {
-        implementation({ // We're passing it a "test execution context" (t)
+        await implementation({ // Pass in a test execution contest (t)
           assert: assert.ok,
           deepEqual: assert.deepStrictEqual,
           is: assert.strictEqual
@@ -29,11 +33,14 @@ function createTest(title, implementation) {
   };
 }
 
-function runTests() {
+async function runTests() {
   console.log("\nRunning...");
   console.time("Ran in");
   for (const test of suite) {
-    test.run();
+    test.start();
+  }
+  for (const test of suite) {
+    await test.result;
     report(test);
   }
   console.timeEnd("Ran in");

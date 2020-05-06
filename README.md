@@ -12,6 +12,8 @@ Minimalist unit testing library with just the features I need.
 
 - Tests are easily debuggable (just set a breakpoint and run!).
 
+- Supports async tests (and they run concurrently!).
+
 - Includes a tiny assertion library, but you can use any other you want.
 
 - No dependencies or build process.
@@ -31,8 +33,6 @@ Or you can play with it here: https://codesandbox.io/s/github/tomascristian/test
 - Requires Node.js v13+ (needs ES modules support, Node.js v12 might work with --experimental-modules flag).
 
 ## TO-DO / V1 ROADMAP
-- Add support for async tests.
-- Add ability to run tests concurrently.
 - Add test timeouts.
 - Improve default reporter.
 - Consider extra assertions.
