@@ -2,51 +2,54 @@ import assert from "assert";
 
 export default addTest;
 
-process.nextTick(runTests); // Wait until test file is parsed
-
 const suite = [];
-
 function addTest(title, implementation) {
-  const test = createTest(title, implementation);
+  const test = { title, implementation };
   suite.push(test);
 }
 
-function createTest(title, implementation) {
-  return {
-    title,
-    error: null,
-    result: undefined,
-    start() {
-      this.result = this.run();
-    },
-    async run() {
-      try {
-        await implementation({ // Pass in a test execution contest (t)
-          assert: assert.ok,
-          deepEqual: assert.deepStrictEqual,
-          is: assert.strictEqual
-        });
-      } catch (e) {
-        this.error = e;
-      }
-    }
+process.nextTick(startTests); // Wait until test file is parsed
+
+function startTests() {
+  const startTime = Date.now();
+  const runningTests = suite.map(startTest);
+  report(runningTests, startTime);
+}
+
+function startTest(test) {
+  const result = { error: null, title: test.title };
+  const runningTest = Promise.resolve()
+    .then(() => runTest(test))
+    .catch(e => {
+      result.error = e;
+    })
+    .then(() => result);
+  return runningTest;
+}
+
+function runTest(test) {
+  const t = {
+    assert: assert.ok,
+    deepEqual: assert.deepStrictEqual,
+    is: assert.strictEqual
   };
+  return test.implementation(t);
 }
 
-async function runTests() {
+async function report(runningTests, startTime) {
   console.log("\nRunning...");
-  console.time("Ran in");
-  for (const test of suite) {
-    test.start();
-  }
-  for (const test of suite) {
-    await test.result;
-    report(test);
-  }
-  console.timeEnd("Ran in");
+  await printSequentially(runningTests);
+  console.log(`Ran in: ${Date.now() - startTime}ms`);
 }
 
-function report({ error, title }) {
+async function printSequentially(runningTests) {
+  for await (const result of runningTests) {
+    print(result);
+  }
+}
+
+function print(result) {
+  const { error, title } = result;
   console.log(`${error ? "✗" : "✓"}  ${title}`);
   if (error) {
     console.log(error.stack);
