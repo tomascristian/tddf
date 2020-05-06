@@ -29,6 +29,31 @@ npm test
 ```
 Or you can play with it here: https://codesandbox.io/s/github/tomascristian/test
 
+## Usage
+
+### Write your tests 
+
+Create a test file anywhere with any name you want (eg. `silly.test.js`).
+
+```js
+import test from "path-to-test-but-not-your-file-i-mean-the-library-file-test.js";
+
+test("Stuff", t => {
+	t.assert("Things");
+});
+
+test("Async stuff", async t => {
+  const expected = "I come from the future!";
+	const result = Promise.resolve(expected);
+	t.is(await result, expected);
+});
+```
+
+### Run your tests
+```
+node silly.test.js
+```
+
 ## Other Notes
 - Requires Node.js v13+ (needs ES modules support, Node.js v12 might work with --experimental-modules flag).
 
