@@ -33,3 +33,7 @@ test("Keeps running tests after a failed test", t => {
     t.assert(true);
   });
 }
+
+test("Displays pretty diff", t => {
+  t.deepEqual({ a: "a", b: "b" }, { a: "notA", b: "b" });
+});
