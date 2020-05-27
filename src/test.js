@@ -18,13 +18,34 @@ function startTests() {
 
 function startTest(test) {
   const result = { error: null, title: test.title };
+  const timeout = createTimeout(2000, "Test took too long to run");
   const runningTest = Promise.resolve()
-    .then(() => runTest(test))
+    .then(() => Promise.race([
+      timeout.start(),
+      runTest(test)
+    ]))
     .catch(e => {
       result.error = e;
     })
-    .then(() => result);
+    .then(() => {
+      timeout.clear();
+      return result;
+    });
   return runningTest;
+}
+
+function createTimeout(ms, reason) {
+  let timeoutID;
+  return {
+    start() {
+      return new Promise((_, reject) => {
+        timeoutID = setTimeout(() => reject(new Error(reason)), ms);
+      });
+    },
+    clear() {
+      clearTimeout(timeoutID);
+    }
+  };
 }
 
 function runTest(test) {
