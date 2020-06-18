@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import path from "path";
-import fs from "fs";
+import { parse, resolve } from "path";
+import { readdir } from "fs/promises";
 import tapReporter from "./reporters/tap.js";
 
-const cliName = path.parse(process.argv[1]).name;
+const cliName = parse(process.argv[1]).name;
 process.title = cliName;
 
 const options = {};
@@ -32,9 +32,11 @@ if (args.includes("--tap-reporter")) {
   options.reporter = tapReporter;
 }
 
-getFilesInDir("test").forEach(file => import(file));
-setHarnessOptions(options);
-
+(async () => {
+  const testFiles = await getTestFiles();
+  testFiles.forEach(file => import(file));
+  setHarnessOptions(options);
+})();
 
 function getHelpText() {
   let lines = [`Usage: ${cliName} [OPTION]`];
@@ -46,11 +48,32 @@ function getHelpText() {
   return lines.join("\n");
 }
 
-function getFilesInDir(dir) {
-  // Note: this only works if working dir is the project's root
-  const absoluteDir = path.resolve("test");
-  const getAbsolutePaths = (file) => path.resolve(absoluteDir, file);
-  return fs.readdirSync(dir).map(getAbsolutePaths);
+// Gets `./**/test/*.js` and `./**/*.test.js` file paths.
+async function getTestFiles(path = ".") {
+  const dirents = await readdir(path, { withFileTypes: true });
+
+  const files = dirents.filter(isTestFile).map(toPath);
+  const dirs = dirents.filter(isWantedDirectory).map(toPath);
+
+  const subdirFiles = await Promise.all(dirs.map(getTestFiles));
+
+  return files.concat(...subdirFiles);
+
+  function isTestFile(dirent) {
+    const { name } = dirent;
+    const isInsideTestFolder = path.endsWith("test") && name.endsWith(".js");
+    return dirent.isFile() && (isInsideTestFolder || name.endsWith(".test.js"));
+  }
+
+  function isWantedDirectory(dirent) {
+    return dirent.isDirectory()
+    && !dirent.name.startsWith(".")
+    && dirent.name !== "node_modules";
+  }
+
+  function toPath(dirent) {
+    return resolve(path, dirent.name);
+  }
 }
 
 function setHarnessOptions(options) {
