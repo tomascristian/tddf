@@ -1,7 +1,14 @@
 import assert from "assert";
 import report from "./reporters/default.js";
 
-export default addTest;
+const options = {
+  reporter: report
+};
+const test = Object.assign(addTest, {
+  options
+});
+
+export default test;
 
 const suite = [];
 function addTest(title, implementation) {
@@ -11,7 +18,7 @@ function addTest(title, implementation) {
 
 process.nextTick(startTests); // Wait until test file is parsed
 
-function startTests() {
+function startTests(report = options.reporter) {
   const startTime = Date.now();
   const runningTests = suite.map(startTest);
   report(runningTests, startTime);
